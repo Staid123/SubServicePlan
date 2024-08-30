@@ -12,7 +12,7 @@ services:
     env_file:
       - ./.env
     command: >
-      sh -c "uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+      sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
 
   database:
     image: postgres:latest
