@@ -34,7 +34,7 @@ class Service(Base):
     name: Mapped[str] = mapped_column(unique=True)
     full_price: Mapped[int]
 
-    service: Mapped[list["Subscription"]] = relationship("Subscription", back_populates="service")
+    subscriptions: Mapped[list["Subscription"]] = relationship("Subscription", back_populates="service")
 
     __table_args__ = (
         CheckConstraint('full_price > 0', name='check_price_positive'),
@@ -48,7 +48,7 @@ class Plan(Base):
     subscriptions: Mapped[list["Subscription"]] = relationship("Subscription", back_populates="plan")
 
     __table_args__ = (
-        CheckConstraint('discount_percent > 0', name='check_price_positive'),
+        CheckConstraint('discount_percent >= 0', name='check_price_positive'),
     )
 
 
