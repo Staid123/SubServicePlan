@@ -37,7 +37,7 @@ class Service(Base):
     service: Mapped[list["Subscription"]] = relationship("Subscription", back_populates="service")
 
     __table_args__ = (
-        CheckConstraint('price > 0', name='check_price_positive'),
+        CheckConstraint('full_price > 0', name='check_price_positive'),
     )
 
 
