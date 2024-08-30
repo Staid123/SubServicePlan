@@ -2,11 +2,11 @@ from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import (
     create_async_engine, 
     AsyncEngine, async_sessionmaker, AsyncSession)
-from config import settings
+from config import SQLALCHEMY_DATABASE_URL
 
 
 engine: AsyncEngine = create_async_engine(
-    url=url,
+    url=SQLALCHEMY_DATABASE_URL,
     echo=False,
     echo_pool=False,
     pool_size=5,

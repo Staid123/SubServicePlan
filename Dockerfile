@@ -7,8 +7,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Создание директории для приложения и установка рабочей директории
-RUN mkdir /music_app
-WORKDIR /music_app
+RUN mkdir /service
+WORKDIR /service
 
 # Копирование только файлов зависимостей
 COPY requirements.txt ./
@@ -17,10 +17,8 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Копирование остального кода приложения
-COPY . .
+COPY service/ .
 
 # Открытие портов
 EXPOSE 8000
 
-# Команда по умолчанию для запуска приложения
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

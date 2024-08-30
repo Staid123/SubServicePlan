@@ -1,0 +1,88 @@
+services:
+  fastapi_app:
+    container_name: fastapi_app
+    build: 
+      context: .
+    ports:
+      - 8000:8000
+    volumes:
+      - ./service:/service
+    depends_on:
+      - database
+    env_file:
+      - ./.env
+    command: >
+      sh -c "uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+
+  database:
+    image: postgres:latest
+    container_name: database
+    env_file:
+      - ./.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_database:/var/lib/postgresql/data/
+      
+  # test_database:
+  #   image: postgres:latest
+  #   container_name: test_database
+  #   env_file:
+  #     - ./.env_test_db
+  #   ports:
+  #     - "65401:5432"
+  #   volumes:
+  #     - postgres_test_database:/var/lib/postgresql/data/
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - database
+      # - test_database
+
+  # redis:
+  #   container_name: redis
+  #   image: redis:7.0.5-alpine
+  #   hostname: redis
+  #   ports:
+  #     - "6379:6379"
+
+
+  # worker:
+  #   build: .
+  #   container_name: worker
+  #   hostname: worker
+  #   entrypoint: celery
+  #   command: -A music.tasks.celery_app worker --loglevel=info
+  #   volumes:
+  #     - ./music:/music
+  #   links:
+  #     - redis
+  #   depends_on:
+  #     - redis
+  #     - music_database
+
+  # flower:
+  #   build: .
+  #   container_name: flower
+  #   hostname: flower
+  #   entrypoint: celery
+  #   command: -A music.tasks.celery_app flower
+  #   volumes:
+  #     - ./music:/music
+  #   links:
+  #     - redis
+  #   depends_on:
+  #     - redis
+  #   ports:
+  #     - "5555:5555"
+
+volumes:
+  postgres_database:
+  # postgres_test_database:
