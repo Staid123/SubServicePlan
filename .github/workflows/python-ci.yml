@@ -52,6 +52,6 @@ jobs:
     - name: Run tests with pytest
       run: docker-compose run --rm -w /service fastapi_app pytest -s -v
 
-
+ 
     - name: Shut down services
       run: docker-compose down
