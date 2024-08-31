@@ -29,10 +29,10 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+    # - name: Install dependencies
+    #   run: |
+    #     python -m pip install --upgrade pip
+    #     pip install -r requirements.txt
 
     - name: Create .env file
       run: |
@@ -49,15 +49,12 @@ jobs:
     - name: Start services with Docker Compose
       run: docker-compose up -d
 
-    - name: Wait for database to be ready
-      run: |
-        until docker-compose exec database pg_isready -U ${{ secrets.POSTGRES_USER }}; do
-          echo "Waiting for database...";
-          sleep 5;
-        done
-
-    - name: Run Alembic migrations
-      run: docker-compose exec fastapi_app alembic upgrade head
+    # - name: Wait for database to be ready
+    #   run: |
+    #     until docker-compose exec database pg_isready -U ${{ secrets.POSTGRES_USER }}; do
+    #       echo "Waiting for database...";
+    #       sleep 5;
+    #     done
 
     - name: Run tests with pytest
       run: docker-compose exec fastapi_app pytest -s -v
