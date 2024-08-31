@@ -12,35 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      database:
-        image: postgres:latest
-        env:
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-      test_database:
-        image: postgres:latest
-        env:
-          POSTGRES_DB: test_db
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: 1234
-        ports:
-          - 5433:5432
-        options: >-
-          --health-cmd="pg_isready -U postgres" 
-          --health-interval=10s 
-          --health-timeout=5s 
-          --health-retries=5
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -63,12 +34,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Start services with Docker Compose
-      run: docker-compose up -d
-
     - name: Create .env file
       run: |
-        echo "POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}" >> .env
+        echo "POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}" > .env
         echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}" >> .env
         echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
         echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
@@ -78,8 +46,21 @@ jobs:
         echo "POSTGRES_TEST_USER=${{ secrets.POSTGRES_TEST_USER }}" >> .env
         echo "POSTGRES_TEST_PASSWORD=${{ secrets.POSTGRES_TEST_PASSWORD }}" >> .env
 
+    - name: Start services with Docker Compose
+      run: docker-compose up -d
+
+    - name: Wait for database to be ready
+      run: |
+        until docker-compose exec database pg_isready -U ${{ secrets.POSTGRES_USER }}; do
+          echo "Waiting for database...";
+          sleep 5;
+        done
+
+    - name: Run Alembic migrations
+      run: docker-compose exec fastapi_app alembic upgrade head
+
     - name: Run tests with pytest
-      run: pytest -s -v
+      run: docker-compose exec fastapi_app pytest -s -v
 
     - name: Shut down services
       run: docker-compose down
