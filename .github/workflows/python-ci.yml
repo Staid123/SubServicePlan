@@ -47,10 +47,10 @@ jobs:
         echo "POSTGRES_TEST_PASSWORD=${{ secrets.POSTGRES_TEST_PASSWORD }}" >> .env
 
     - name: Start services with Docker Compose
-      run: docker-compose up -d
+      run: docker-compose up -d --build
 
     - name: Run tests with pytest
-      run: pytest -s -v
+      run: docker-compose run --rm -w /service fastapi_app pytest -s -v
 
 
     - name: Shut down services
