@@ -79,7 +79,7 @@ jobs:
     #   run: docker-compose exec fastapi_app alembic upgrade head
 
     - name: Run tests with pytest
-      run: docker-compose exec fastapi_app pytest --maxfail=1 --disable-warnings -v
+      run: pytest -s -v
 
     # - name: Shut down services
     #   run: docker-compose down
