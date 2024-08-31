@@ -1,10 +1,10 @@
 
 import pytest
+from .conftest import client
 
 
-@pytest.mark.asyncio
-async def test_create_plan(ac):
-    response = await ac.post(
+def test_create_plan():
+    response = client.post(
         url="/api/v1/plan/",
         json={
             "plan_type": "full",
