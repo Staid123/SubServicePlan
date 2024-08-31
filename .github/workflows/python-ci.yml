@@ -45,20 +45,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
-    # - name: Install Docker Compose
-    #   run: |
-    #     sudo apt-get update
-    #     sudo apt-get install docker-compose -y
-
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+
+    - name: Start services with Docker Compose
+      run: docker-compose up -d
 
     - name: Create .env file
       run: |
@@ -72,14 +73,8 @@ jobs:
         echo "POSTGRES_TEST_USER=${{ secrets.POSTGRES_TEST_USER }}" >> .env
         echo "POSTGRES_TEST_PASSWORD=${{ secrets.POSTGRES_TEST_PASSWORD }}" >> .env
 
-    # - name: Start FastAPI service
-    #   run: docker-compose up -d fastapi_app 
-
-    # - name: Run Alembic migrations
-    #   run: docker-compose exec fastapi_app alembic upgrade head
-
     - name: Run tests with pytest
       run: pytest -s -v
 
-    # - name: Shut down services
-    #   run: docker-compose down
+    - name: Shut down services
+      run: docker-compose down
