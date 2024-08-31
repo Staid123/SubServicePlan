@@ -11,6 +11,8 @@ def test_create_plan():
             "discount_percent": 0
         }
     )
+    print(response.status_code)
+    print(response.json())
     assert response.status_code == 201
     assert response.json() == {
             "id": 1,
