@@ -1,8 +1,8 @@
-"""price -> full_price
+"""first migration
 
-Revision ID: 8e7f505c3e66
+Revision ID: 402da8b323dd
 Revises: 
-Create Date: 2024-08-30 15:06:24.618322
+Create Date: 2024-08-31 11:08:48.591251
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '8e7f505c3e66'
+revision: str = '402da8b323dd'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -24,7 +24,7 @@ def upgrade() -> None:
     sa.Column('plan_type', sa.Enum('full', 'student', 'discount', name='plantype'), nullable=False),
     sa.Column('discount_percent', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.CheckConstraint('discount_percent > 0', name='check_price_positive'),
+    sa.CheckConstraint('discount_percent >= 0', name='check_price_positive'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('service',

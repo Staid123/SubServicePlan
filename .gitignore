@@ -3,6 +3,6 @@ venv/
 .idea/
 .env
 __pycache__/
-.env
+.env*
 certs/
 .pytest_cache
