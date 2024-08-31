@@ -50,10 +50,10 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Install Docker Compose
-      run: |
-        sudo apt-get update
-        sudo apt-get install docker-compose -y
+    # - name: Install Docker Compose
+    #   run: |
+    #     sudo apt-get update
+    #     sudo apt-get install docker-compose -y
 
     - name: Install dependencies
       run: |
@@ -72,14 +72,14 @@ jobs:
         echo "POSTGRES_TEST_USER=${{ secrets.POSTGRES_TEST_USER }}" >> .env
         echo "POSTGRES_TEST_PASSWORD=${{ secrets.POSTGRES_TEST_PASSWORD }}" >> .env
 
-    - name: Start FastAPI service
-      run: docker-compose up -d fastapi_app 
+    # - name: Start FastAPI service
+    #   run: docker-compose up -d fastapi_app 
 
-    - name: Run Alembic migrations
-      run: docker-compose exec fastapi_app alembic upgrade head
+    # - name: Run Alembic migrations
+    #   run: docker-compose exec fastapi_app alembic upgrade head
 
     - name: Run tests with pytest
       run: docker-compose exec fastapi_app pytest --maxfail=1 --disable-warnings -v
 
-    - name: Shut down services
-      run: docker-compose down
+    # - name: Shut down services
+    #   run: docker-compose down
