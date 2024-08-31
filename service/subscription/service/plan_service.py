@@ -64,7 +64,19 @@ class PlanService:
             plan_update=plan_update,
             plan_id=plan_id
         )
-        return PlanUpdate.model_validate(plan, from_attributes=True)
+        return PlanOut.model_validate(plan, from_attributes=True)
+
+    async def delete_plan(
+        self,
+        plan_id: int,
+        session: AsyncSession
+    ) -> None:
+        return await self.plan_repository.delete_plan(
+            session=session,
+            plan_id=plan_id
+        )
+
+
 
 def get_plan_service():
     return PlanService(PlanRepository())

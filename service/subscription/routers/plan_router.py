@@ -61,3 +61,14 @@ async def update_plan(
         plan_update=plan_update,
         plan_id=plan_id
     )
+
+@router.delete("/{plan_id}/", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_plan(
+    plan_id: int,
+    plan_service: Annotated[PlanService, Depends(get_plan_service)],
+    session: Annotated[AsyncSession, Depends(session_getter)],
+) -> None:
+    return await plan_service.delete_plan(
+        session=session,
+        plan_id=plan_id
+    )

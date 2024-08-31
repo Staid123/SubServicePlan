@@ -3,7 +3,6 @@ from sqlalchemy import select
 from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import status
-from sqlalchemy.orm import joinedload
 from enums import PlanType
 from database.models import Plan
 from subscription.schemas import PlanIn, PlanOut, PlanUpdate
@@ -19,9 +18,6 @@ class PlanRepository:
     ) -> list[Plan]:
         stmt = (
             select(Plan)
-            .options(
-                joinedload(Plan.subscriptions),
-            )
             .offset(skip)
             .limit(limit)
             .order_by(Plan.id)
@@ -49,17 +45,17 @@ class PlanRepository:
         session: AsyncSession,
         plan_in: PlanIn
     ) -> PlanOut:
-        # try:
+        try:
             plan: Plan = Plan(**plan_in.model_dump())
             session.add(plan)
             await session.commit()
             return await self.get_plan_by_id(session=session, plan_id=plan.id)
-        # except Exception:
-        #     await session.rollback()
-        #     raise HTTPException(
-        #         status_code=status.HTTP_400_BAD_REQUEST,
-        #         detail="Can not add plan"
-        #     )
+        except Exception:
+            await session.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Can not add plan"
+            )
         
     async def update_plan(
         self,
@@ -81,4 +77,23 @@ class PlanRepository:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Can not update plan"
+            )
+        
+    async def delete_plan(
+        self,
+        session: AsyncSession,
+        plan_id: int
+    ) -> None:
+        plan: Plan = await self.get_plan_by_id(
+            session=session,
+            plan_id=plan_id
+        )
+        try:
+            await session.delete(plan)
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Can not delete plan"
             )
