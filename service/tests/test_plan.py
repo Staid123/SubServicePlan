@@ -1,5 +1,8 @@
 
+import pytest
 
+
+@pytest.mark.asyncio
 async def test_create_plan(ac):
     response = await ac.post(
         url="/api/v1/plan/",
@@ -15,6 +18,7 @@ async def test_create_plan(ac):
             "discount_percent": 0
         }
     
+@pytest.mark.asyncio
 async def test_get_all_plans(ac):
     response = await ac.get(url="/api/v1/plan/all/")
     assert response.status_code == 200
@@ -26,6 +30,7 @@ async def test_get_all_plans(ac):
         }
     ]
 
+@pytest.mark.asyncio
 async def test_get_plan_by_id(ac):
     response = await ac.get(url="/api/v1/plan/1/")
     assert response.status_code == 200
@@ -35,6 +40,7 @@ async def test_get_plan_by_id(ac):
         "discount_percent": 0
     }
 
+@pytest.mark.asyncio
 async def test_update_plan(ac):
     response = await ac.patch(
         url="/api/v1/plan/1/", 
