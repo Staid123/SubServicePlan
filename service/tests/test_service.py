@@ -1,8 +1,4 @@
 
-import pytest
-
-
-@pytest.mark.asyncio
 async def test_create_service(ac):
     response = await ac.post(
         url="/api/v1/service/",
@@ -18,7 +14,6 @@ async def test_create_service(ac):
         "full_price": 1000
     }
 
-@pytest.mark.asyncio
 async def test_get_all_services(ac):
     response = await ac.get(
         url="/api/v1/service/all/"
@@ -32,7 +27,6 @@ async def test_get_all_services(ac):
         }
     ]
 
-@pytest.mark.asyncio
 async def test_get_service_by_id(ac):
     response = await ac.get(
         url="/api/v1/service/1/"
@@ -44,7 +38,6 @@ async def test_get_service_by_id(ac):
         "full_price": 1000
     }
 
-@pytest.mark.asyncio
 async def test_update_service(ac):
     response = await ac.patch(
         url="/api/v1/service/1/",
