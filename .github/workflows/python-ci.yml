@@ -50,6 +50,11 @@ jobs:
       with:
         python-version: '3.11'
 
+    - name: Install Docker Compose
+      run: |
+        sudo apt-get update
+        sudo apt-get install docker-compose -y
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -58,7 +63,11 @@ jobs:
     - name: Start FastAPI service
       run: docker-compose up -d fastapi_app
 
-    - name: Wait for services to be healthy
-      run: |
-        docker-compose run fastapi_app sh -c "until pg_isready -h database -U ${{ secrets.POSTGRES_USER }}; do sleep 1; done"
-        docker-compose run fastapi_app sh -c "until pg_isready -h test_database -U postgres; do sleep 1
+    - name: Run Alembic migrations
+      run: docker-compose exec fastapi_app alembic upgrade head
+
+    - name: Run tests with pytest
+      run: docker-compose exec fastapi_app pytest --maxfail=1 --disable-warnings -v
+
+    - name: Shut down services
+      run: docker-compose down
