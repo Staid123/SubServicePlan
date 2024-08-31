@@ -49,12 +49,8 @@ jobs:
     - name: Start services with Docker Compose
       run: docker-compose up -d
 
-    - name: Wait for database to be ready
-      run: |
-        until docker exec database pg_isready -h database -p 5432; do echo "waiting for database to be ready..."; sleep 2; done
-
     - name: Run tests with pytest
-      run: docker-compose run --rm -w /service fastapi_app pytest -s -v
+      run: pytest -s -v
 
 
     - name: Shut down services
