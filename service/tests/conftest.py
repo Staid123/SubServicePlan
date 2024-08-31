@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker, AsyncEngine
 from sqlalchemy.pool import NullPool
-from service.config import SQLALCHEMY_DATABASE_TEST_URL
+from config import SQLALCHEMY_DATABASE_TEST_URL
 from database.models import Base
 from database import session_getter
 from main import app
