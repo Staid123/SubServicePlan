@@ -24,15 +24,15 @@ services:
     volumes:
       - postgres_database:/var/lib/postgresql/data/
       
-  # test_database:
-  #   image: postgres:latest
-  #   container_name: test_database
-  #   env_file:
-  #     - ./.env_test_db
-  #   ports:
-  #     - "65401:5432"
-  #   volumes:
-  #     - postgres_test_database:/var/lib/postgresql/data/
+  test_database:
+    image: postgres:latest
+    container_name: test_database
+    env_file:
+      - ./.env_test
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_test_database:/var/lib/postgresql/data/
 
   pgadmin:
     image: dpage/pgadmin4
@@ -44,7 +44,7 @@ services:
       - "5050:80"
     depends_on:
       - database
-      # - test_database
+      - test_database
 
   # redis:
   #   container_name: redis
@@ -85,4 +85,4 @@ services:
 
 volumes:
   postgres_database:
-  # postgres_test_database:
+  postgres_test_database:
