@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from pydantic import ConfigDict, BaseModel, EmailStr
 
 from enums import PlanType
@@ -15,8 +16,6 @@ class ServiceIn(ServiceBase):
 
 class ServiceOut(ServiceIn):
     id: int
-    service: list["SubscriptionBase"]
-
 
 class ServiceUpdate(BaseModel):
     name: str | None = None
@@ -34,10 +33,8 @@ class PlanIn(PlanBase):
 
 class PlanOut(PlanIn):
     id: int
-    subscriptions: list["SubscriptionBase"]
 
 class PlanUpdate(BaseModel):
-    plan_type: PlanType | None = None
     discount_percent: int | None = None
 
 
