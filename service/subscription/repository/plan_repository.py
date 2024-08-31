@@ -45,17 +45,17 @@ class PlanRepository:
         session: AsyncSession,
         plan_in: PlanIn
     ) -> PlanOut:
-        try:
+        # try:
             plan: Plan = Plan(**plan_in.model_dump())
             session.add(plan)
             await session.commit()
             return await self.get_plan_by_id(session=session, plan_id=plan.id)
-        except Exception:
-            await session.rollback()
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Can not add plan"
-            )
+        # except Exception:
+        #     await session.rollback()
+        #     raise HTTPException(
+        #         status_code=status.HTTP_400_BAD_REQUEST,
+        #         detail="Can not add plan"
+        #     )
         
     async def update_plan(
         self,
