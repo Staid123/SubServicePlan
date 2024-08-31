@@ -73,7 +73,7 @@ jobs:
         echo "POSTGRES_TEST_PASSWORD=${{ secrets.POSTGRES_TEST_PASSWORD }}" >> .env
 
     - name: Start FastAPI service
-      run: docker-compose up -d fastapi_app
+      run: docker-compose up -d fastapi_app 
 
     - name: Run Alembic migrations
       run: docker-compose exec fastapi_app alembic upgrade head
