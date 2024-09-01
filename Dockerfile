@@ -10,9 +10,6 @@ RUN apt-get update \
 RUN mkdir /service
 WORKDIR /service
 
-# Set PYTHONPATH to ensure modules can be found
-ENV PYTHONPATH=/service
-
 # Copy dependency files
 COPY requirements.txt ./
 
