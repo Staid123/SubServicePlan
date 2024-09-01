@@ -2,6 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import session_getter
+from redis_cache import RedisCache, get_redis_helper
 from subscription.service.service_service import ServiceService, get_service_service
 from subscription.schemas import ServiceIn, ServiceOut, ServiceUpdate
 
@@ -56,12 +57,14 @@ async def update_service(
     service_update: ServiceUpdate,
     service_service: Annotated[ServiceService, Depends(get_service_service)],
     session: Annotated[AsyncSession, Depends(session_getter)],
+    redis_helper: Annotated[RedisCache, Depends(get_redis_helper)],
     service_id: int
 ) -> ServiceOut:
     return await service_service.update_service(
         session=session,
         service_update=service_update,
-        service_id=service_id
+        service_id=service_id,
+        redis_helper=redis_helper,
     )
 
 @router.delete("/{service_id}/", status_code=status.HTTP_204_NO_CONTENT)
@@ -69,8 +72,10 @@ async def delete_service(
     service_id: int,
     service_service: Annotated[ServiceService, Depends(get_service_service)],
     session: Annotated[AsyncSession, Depends(session_getter)],
+    redis_helper: Annotated[RedisCache, Depends(get_redis_helper)],
 ) -> None:
     return await service_service.delete_service(
         session=session,
-        service_id=service_id
+        service_id=service_id,
+        redis_helper=redis_helper
     )

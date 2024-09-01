@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from enums import PlanType
 from database import session_getter
+from redis_cache import RedisCache, get_redis_helper
 from subscription.service.plan_service import PlanService, get_plan_service
 from subscription.schemas import PlanIn, PlanOut, PlanUpdate
 
@@ -54,12 +55,14 @@ async def update_plan(
     plan_update: PlanUpdate,
     plan_service: Annotated[PlanService, Depends(get_plan_service)],
     session: Annotated[AsyncSession, Depends(session_getter)],
+    redis_helper: Annotated[RedisCache, Depends(get_redis_helper)],
     plan_id: int
 ) -> PlanOut:
     return await plan_service.update_plan(
         session=session,
         plan_update=plan_update,
-        plan_id=plan_id
+        plan_id=plan_id,
+        redis_helper=redis_helper,
     )
 
 @router.delete("/{plan_id}/", status_code=status.HTTP_204_NO_CONTENT)
@@ -67,8 +70,10 @@ async def delete_plan(
     plan_id: int,
     plan_service: Annotated[PlanService, Depends(get_plan_service)],
     session: Annotated[AsyncSession, Depends(session_getter)],
+    redis_helper: Annotated[RedisCache, Depends(get_redis_helper)],
 ) -> None:
     return await plan_service.delete_plan(
         session=session,
-        plan_id=plan_id
+        plan_id=plan_id,
+        redis_helper=redis_helper,
     )

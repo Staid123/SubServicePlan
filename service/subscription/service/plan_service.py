@@ -3,12 +3,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from enums import PlanType
 from database.models import Plan
+from redis_cache import RedisCache
 from subscription.schemas import PlanIn, PlanOut, PlanUpdate
 from subscription.repository.plan_repository import PlanRepository
 
 
 
 class PlanService:
+    TOTAL_PRICE = "total_price"
+
     def __init__(self, plan_repository: PlanRepository):
         """
         Initialize the plan service with a plan repository.
@@ -41,7 +44,6 @@ class PlanService:
         )
         return PlanOut.model_validate(plan, from_attributes=True)
     
-
     async def create_plan(
         self,
         session: AsyncSession,
@@ -57,24 +59,29 @@ class PlanService:
         self,
         plan_update: PlanUpdate,
         session: AsyncSession,
-        plan_id: int
+        plan_id: int,
+        redis_cache: RedisCache
     ) -> PlanUpdate:
         plan: Plan = await self.plan_repository.update_plan(
             session=session,
             plan_update=plan_update,
             plan_id=plan_id
         )
+        await redis_cache.delete(self.TOTAL_PRICE)
         return PlanOut.model_validate(plan, from_attributes=True)
 
     async def delete_plan(
         self,
         plan_id: int,
-        session: AsyncSession
+        session: AsyncSession,
+        redis_cache: RedisCache
     ) -> None:
-        return await self.plan_repository.delete_plan(
+        await self.plan_repository.delete_plan(
             session=session,
             plan_id=plan_id
         )
+        await redis_cache.delete(self.TOTAL_PRICE)
+        return None
 
 
 

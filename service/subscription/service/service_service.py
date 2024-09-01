@@ -1,13 +1,15 @@
-from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import Service
+from redis_cache import RedisCache
 from subscription.schemas import ServiceIn, ServiceOut, ServiceUpdate
 from subscription.repository.service_repository import ServiceRepository
 
 
 
 class ServiceService:
+    TOTAL_PRICE = "total_price"
+
     def __init__(self, service_repository: ServiceRepository):
         """
         Initialize the service service with a service repository.
@@ -57,24 +59,30 @@ class ServiceService:
         self,
         service_update: ServiceUpdate,
         session: AsyncSession,
-        service_id: int
+        service_id: int,
+        redis_helper: RedisCache
     ) -> ServiceUpdate:
         service: Service = await self.service_repository.update_service(
             session=session,
             service_update=service_update,
             service_id=service_id
         )
+        await redis_helper.delete(self.TOTAL_PRICE)
         return ServiceOut.model_validate(service, from_attributes=True)
 
     async def delete_service(
         self,
         service_id: int,
-        session: AsyncSession
+        session: AsyncSession,
+        redis_helper: RedisCache
     ) -> None:
-        return await self.service_repository.delete_service(
+        await self.service_repository.delete_service(
             session=session,
             service_id=service_id
         )
+        await redis_helper.delete(self.TOTAL_PRICE)
+        return None
+
 
 
 def get_service_service():
