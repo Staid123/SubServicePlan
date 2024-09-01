@@ -57,11 +57,6 @@ class SubscriptionOut(SubscriptionIn):
     service: "ServiceBase"
     plan: "PlanBase"
 
-class SubscriptionUpdate(BaseModel):
-    user_id: int | None = None
-    service_id: int | None = None
-    plan_id: int | None = None
-
 
 class UserBase(BaseModel):
     username: str
