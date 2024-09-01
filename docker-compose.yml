@@ -63,6 +63,8 @@ services:
     hostname: worker1
     entrypoint: celery
     command: -A tasks.celery_app worker --loglevel=info
+    env_file:
+      - ./.env
     volumes:
       - ./service:/service
     links:
@@ -77,6 +79,8 @@ services:
     hostname: worker2
     entrypoint: celery
     command: -A tasks.celery_app worker --loglevel=info
+    env_file:
+      - ./.env
     volumes:
       - ./service:/service
     links:
@@ -91,6 +95,8 @@ services:
     hostname: flower
     entrypoint: celery
     command: -A tasks.celery_app flower
+    env_file:
+      - ./.env
     volumes:
       - ./service:/service
     links:
