@@ -57,6 +57,7 @@ class Subscription(Base):
     service_id: Mapped[int] = mapped_column(ForeignKey("service.id"))
     plan_id: Mapped[int] = mapped_column(ForeignKey("plan.id"))
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
+    price: Mapped[int]
 
     user: Mapped["User"] = relationship('User', back_populates='subscriptions')
     service: Mapped["Service"] = relationship('Service', back_populates='subscriptions')

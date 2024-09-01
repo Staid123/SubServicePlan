@@ -52,6 +52,7 @@ class SubscriptionOut(SubscriptionIn):
     id: int
 
     created_at: datetime
+    price: int
     user: "UserBase"
     service: "ServiceBase"
     plan: "PlanBase"
