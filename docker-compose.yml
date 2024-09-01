@@ -27,8 +27,6 @@ services:
   test_database:
     image: postgres:latest
     container_name: test_database
-    # env_file:
-    #   - ./.env_test
     environment:
       - POSTGRES_DB=test_db
       - POSTGRES_USER=postgres
@@ -56,55 +54,6 @@ services:
     hostname: redis
     ports:
       - "6379:6379"
-
-  worker1:
-    build: .
-    container_name: worker1
-    hostname: worker1
-    entrypoint: celery
-    command: -A tasks.celery_app worker --loglevel=info
-    env_file:
-      - ./.env
-    volumes:
-      - ./service:/service
-    links:
-      - redis
-    depends_on:
-      - redis
-      - database
-
-  worker2:
-    build: .
-    container_name: worker2
-    hostname: worker2
-    entrypoint: celery
-    command: -A tasks.celery_app worker --loglevel=info
-    env_file:
-      - ./.env
-    volumes:
-      - ./service:/service
-    links:
-      - redis
-    depends_on:
-      - redis
-      - database
-
-  flower:
-    build: .
-    container_name: flower
-    hostname: flower
-    entrypoint: celery
-    command: -A tasks.celery_app flower
-    env_file:
-      - ./.env
-    volumes:
-      - ./service:/service
-    links:
-      - redis
-    depends_on:
-      - redis
-    ports:
-      - "5555:5555"
 
 volumes:
   postgres_database:
